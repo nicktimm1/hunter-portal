@@ -1,0 +1,286 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunter Group Portal Gateway</title>
+<style>
+:root{
+  --bg:#0b1522; --panel:#122033; --panel2:#17283d; --panel3:#0f1c2b;
+  --border:#29415d; --text:#eef4fb; --muted:#a9b7c8; --accent:#f28c00;
+  --success:#10b981; --danger:#ef4444;
+}
+*{box-sizing:border-box}
+body{
+  margin:0;font-family:Arial,Helvetica,sans-serif;
+  background:linear-gradient(180deg,#07101a 0%,#0b1522 100%);
+  color:var(--text)
+}
+.topbar{
+  position:sticky;top:0;z-index:10;
+  display:flex;justify-content:space-between;align-items:center;flex-wrap:wrap;gap:12px;
+  padding:14px 20px;background:rgba(9,17,27,.96);border-bottom:1px solid var(--border)
+}
+.brand small{
+  display:block;color:var(--accent);text-transform:uppercase;letter-spacing:.22em;font-weight:700
+}
+.brand h1{margin:2px 0 0;font-size:28px}
+.wrap{max-width:1280px;margin:24px auto;padding:0 20px}
+.hero,.card,.section,.item,.login-box{
+  border:1px solid var(--border);box-shadow:0 12px 24px rgba(0,0,0,.22)
+}
+.hero{
+  background:linear-gradient(135deg,#09111b,#102238);border-radius:20px;padding:28px
+}
+.hero h2{margin:0 0 10px;font-size:34px}
+.hero p{margin:0;color:var(--muted);font-size:18px;line-height:1.7;max-width:950px}
+.grid{display:grid;grid-template-columns:1.2fr .8fr;gap:22px;margin-top:22px}
+.card{
+  background:var(--panel);border-radius:18px;padding:22px
+}
+.card h3{margin:0 0 10px;font-size:24px}
+.card p{margin:0 0 16px;color:var(--muted);line-height:1.65}
+.badge{
+  display:inline-block;padding:6px 10px;border-radius:999px;font-size:12px;font-weight:700;
+  margin-bottom:12px
+}
+.badge.open{
+  background:rgba(16,185,129,.12);border:1px solid rgba(16,185,129,.28);color:#86efac
+}
+.badge.locked{
+  background:rgba(239,68,68,.12);border:1px solid rgba(239,68,68,.28);color:#fca5a5
+}
+.btnrow{display:flex;gap:10px;flex-wrap:wrap}
+.btn{
+  display:inline-block;text-decoration:none;color:#fff;font-weight:700;border-radius:12px;
+  padding:12px 16px;background:var(--accent);border:none;cursor:pointer
+}
+.btn.secondary{background:#1d3550}
+.btn.ghost{background:#203348}
+.section{
+  margin-top:22px;background:var(--panel2);border-radius:18px;padding:22px
+}
+.section h2{margin:0 0 12px;font-size:24px}
+.list{display:grid;grid-template-columns:repeat(2,1fr);gap:14px}
+.item{background:var(--panel3);border-radius:14px;padding:16px}
+.item strong{display:block;margin-bottom:6px}
+.note{
+  margin-top:18px;padding:14px 16px;border-radius:14px;background:#132235;border:1px solid var(--border);
+  color:var(--muted);line-height:1.6
+}
+.footer{margin:24px 0 10px;color:var(--muted);font-size:13px}
+code{background:#0d1724;padding:2px 6px;border-radius:6px;border:1px solid var(--border)}
+.login-box{
+  background:var(--panel);border-radius:18px;padding:22px
+}
+.login-box h3{margin:0 0 10px;font-size:24px}
+.login-box p{margin:0 0 16px;color:var(--muted);line-height:1.65}
+label{
+  display:block;font-size:12px;text-transform:uppercase;letter-spacing:.08em;
+  color:var(--muted);margin-bottom:6px;font-weight:700
+}
+input{
+  width:100%;padding:12px;border:1px solid var(--border);border-radius:12px;
+  background:#0d1724;color:var(--text);margin-bottom:14px
+}
+.status{
+  margin-top:10px;padding:12px 14px;border-radius:12px;border:1px solid var(--border);
+  background:#132235;color:var(--muted);line-height:1.6
+}
+.hidden{display:none !important}
+.director-grid{display:grid;grid-template-columns:repeat(3,1fr);gap:18px;margin-top:18px}
+.lock-card{
+  background:var(--panel3);border:1px solid var(--border);border-radius:16px;padding:18px
+}
+.lock-card h4{margin:0 0 8px;font-size:20px}
+.lock-card p{margin:0 0 14px;color:var(--muted);line-height:1.6}
+@media (max-width:1100px){
+  .grid,.director-grid,.list{grid-template-columns:1fr}
+}
+@media print{
+  body{background:#fff !important;color:#1f2933 !important}
+  .topbar,.btn,.login-box,.status{display:none !important}
+  .hero,.card,.section,.item,.lock-card{
+    background:#fffaf3 !important;color:#1f2933 !important;border:1px solid #f1c48b !important;box-shadow:none !important
+  }
+  .hero h2,.section h2,.card h3,.lock-card h4{color:#c96f00 !important}
+  .hero p,.card p,.note,.footer,.item{color:#4b5563 !important}
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div class="brand">
+    <small>Hunter Group</small>
+    <h1>Portal Gateway</h1>
+  </div>
+  <div style="color:#a9b7c8;font-size:13px;">RAMS open to all • reports locked for directors</div>
+</div>
+
+<div class="wrap">
+  <div class="hero">
+    <h2>Public RAMS access with director-only reporting</h2>
+    <p>This gateway splits the portal into two clear areas: RAMS / compliance tools that are available to everyone, and reporting modules that only unlock after director login. For proper security this should eventually be hosted with Microsoft 365 authentication, but this gives you the right structure now.</p>
+  </div>
+
+  <div class="grid">
+    <div class="card">
+      <span class="badge open">Open Access</span>
+      <h3>RAMS / Compliance</h3>
+      <p>RAMS V90 remains available for all staff and engineers. Use this area for risk assessments, permits, fault sheets, completion sheets and PDF output.</p>
+      <div class="btnrow">
+        <a class="btn" href="Hunter_RAMS_V90.html">Open RAMS V90</a>
+      </div>
+      <div class="note">
+        This module is intentionally open access in the portal structure.<br>
+        Linked file: <code>Hunter_RAMS_V90.html</code>
+      </div>
+    </div>
+
+    <div class="login-box">
+      <span class="badge locked">Director Login</span>
+      <h3>Restricted reporting area</h3>
+      <p>Sales, Hunters National, Actuals and future board-level dashboards are only available after director login.</p>
+      <label for="directorUser">Username</label>
+      <input id="directorUser" type="text" placeholder="Director username">
+      <label for="directorPass">Password</label>
+      <input id="directorPass" type="password" placeholder="Director password">
+      <div class="btnrow">
+        <button class="btn" onclick="directorLogin()">Unlock Reports</button>
+        <button class="btn ghost" onclick="directorLogout()">Lock Again</button>
+      </div>
+      <div class="status" id="loginStatus">
+        Locked. Enter director credentials to access the report modules.
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Director-only reporting modules</h2>
+    <div id="lockedView">
+      <div class="note">
+        These reports stay hidden until director login is successful.
+      </div>
+    </div>
+
+    <div id="directorArea" class="hidden">
+      <div class="director-grid">
+        <div class="lock-card">
+          <h4>Sales Reports</h4>
+          <p>Monthly sales reporting, pipeline, opportunities, commentary, yearly roll-up and PDF export.</p>
+          <a class="btn" href="Hunter_Portal_Opportunities_AutoSum_FIXED.html">Open Sales Portal</a>
+        </div>
+
+        <div class="lock-card">
+          <h4>Hunters National</h4>
+          <p>12-month board reporting with separate monthly pages, yearly overview, graphs, save/load and commentary generation.</p>
+          <a class="btn" href="Hunters_National_2026_Monthly_Board_Portal.html">Open National Portal</a>
+        </div>
+
+        <div class="lock-card">
+          <h4>Actuals</h4>
+          <p>Monthly actuals by division with YTD totals, trends, yearly graphs and commentary.</p>
+          <a class="btn" href="Hunter_Actuals_2025_2026_Monthly_Portal.html">Open Actuals Portal</a>
+        </div>
+        <div class="lock-card">
+          <h4>Hunters North</h4>
+          <p>12-month board reporting with separate monthly pages, yearly overview, graphs, save/load and commentary generation.</p>
+          <a class="btn" href="Hunters_North_2026_Monthly_Board_Portal.html">Open North Portal</a>
+        </div>
+
+        <div class="lock-card">
+          <h4>Hunters South</h4>
+          <p>12-month board reporting with separate monthly pages, yearly overview, graphs, save/load and commentary generation.</p>
+          <a class="btn" href="Hunters_South_2026_Monthly_Board_Portal.html">Open South Portal</a>
+        </div>
+
+        <div class="lock-card">
+          <h4>HCS Supplies</h4>
+          <p>12-month board reporting with separate monthly pages, yearly overview, graphs, save/load and commentary generation.</p>
+          <a class="btn" href="HCS_Supplies_2026_Monthly_Board_Portal.html">Open HCS Supplies Portal</a>
+        </div>
+      </div>
+
+      <div class="note" style="margin-top:18px;">
+        Current linked filenames:<br>
+        <code>Hunter_Portal_Opportunities_AutoSum_FIXED.html</code><br>
+        <code>Hunters_National_2026_Monthly_Board_Portal.html</code><br>
+        <code>Hunter_Actuals_2025_2026_Monthly_Portal.html</code><br>
+        <code>Hunters_North_2026_Monthly_Board_Portal.html</code><br>
+        <code>Hunters_South_2026_Monthly_Board_Portal.html</code><br>
+        <code>HCS_Supplies_2026_Monthly_Board_Portal.html</code>
+      </div>
+    </div>
+  </div>
+
+  <div class="section">
+    <h2>Next stage</h2>
+    <div class="list">
+      <div class="item"><strong>Hosted Login</strong>Move this to a live portal with Microsoft 365 sign-in and real role-based access.</div>
+      <div class="item"><strong>Shared Dashboard</strong>Add one director dashboard showing totals from Sales, National and Actuals.</div>
+      <div class="item"><strong>Document Library</strong>Archive board packs, HTML reports, Word docs and PDFs by month and division.</div>
+      <div class="item"><strong>Back to Portal Buttons</strong>Add return-to-home links inside every live report module.</div>
+    </div>
+  </div>
+
+  <div class="footer">
+    Demo credentials in this local version can be changed inside the HTML file. For real security, host the portal and use Microsoft 365 authentication.
+  </div>
+</div>
+
+<script>
+const DEMO_USER = "director";
+const DEMO_PASS = "hunter2026";
+
+function setLockedState(isUnlocked){
+  const lockedView = document.getElementById("lockedView");
+  const directorArea = document.getElementById("directorArea");
+  const status = document.getElementById("loginStatus");
+
+  if(isUnlocked){
+    lockedView.classList.add("hidden");
+    directorArea.classList.remove("hidden");
+    status.textContent = "Unlocked. Director reporting modules are now available.";
+    status.style.color = "#86efac";
+    status.style.borderColor = "rgba(16,185,129,.28)";
+    status.style.background = "rgba(16,185,129,.12)";
+  } else {
+    lockedView.classList.remove("hidden");
+    directorArea.classList.add("hidden");
+    status.textContent = "Locked. Enter director credentials to access the report modules.";
+    status.style.color = "#a9b7c8";
+    status.style.borderColor = "#29415d";
+    status.style.background = "#132235";
+  }
+}
+
+function directorLogin(){
+  const user = document.getElementById("directorUser").value.trim();
+  const pass = document.getElementById("directorPass").value;
+
+  if(user === DEMO_USER && pass === DEMO_PASS){
+    localStorage.setItem("hunter_director_unlocked", "yes");
+    setLockedState(true);
+  } else {
+    const status = document.getElementById("loginStatus");
+    status.textContent = "Login failed. Demo credentials are incorrect.";
+    status.style.color = "#fca5a5";
+    status.style.borderColor = "rgba(239,68,68,.28)";
+    status.style.background = "rgba(239,68,68,.12)";
+  }
+}
+
+function directorLogout(){
+  localStorage.removeItem("hunter_director_unlocked");
+  document.getElementById("directorUser").value = "";
+  document.getElementById("directorPass").value = "";
+  setLockedState(false);
+}
+
+window.addEventListener("load", () => {
+  const unlocked = localStorage.getItem("hunter_director_unlocked") === "yes";
+  setLockedState(unlocked);
+});
+</script>
+</body>
+</html>

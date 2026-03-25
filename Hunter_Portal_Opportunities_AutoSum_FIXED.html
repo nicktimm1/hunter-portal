@@ -1,0 +1,3358 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>Hunter Group 2026 Board Reporting Portal</title>
+<script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+<style>
+:root {
+  --bg:#0b1522; --panel:#122033; --panel2:#17283d; --panel3:#0f1c2b; --header:#09111b;
+  --border:#29415d; --text:#eef4fb; --muted:#a9b7c8; --accent:#f28c00; --accent2:#ffb347;
+  --printBorder:#f1c48b;
+}
+* { box-sizing:border-box; }
+body { margin:0; font-family:Arial,Helvetica,sans-serif; background:linear-gradient(180deg,#07101a 0%,#0b1522 100%); color:var(--text); }
+.topbar { position:sticky; top:0; z-index:100; display:flex; gap:10px; justify-content:space-between; align-items:center; background:rgba(9,17,27,.97); border-bottom:1px solid var(--border); padding:12px 18px; flex-wrap:wrap; }
+.btn { background:var(--accent); color:#fff; border:none; border-radius:8px; padding:10px 14px; font-weight:700; cursor:pointer; }
+.container { max-width:1280px; margin:24px auto; background:var(--panel); border:1px solid var(--border); border-radius:16px; overflow:hidden; box-shadow:0 16px 50px rgba(0,0,0,.35); }
+.header { display:flex; align-items:center; gap:22px; background:linear-gradient(135deg,var(--header),#102238); padding:28px 30px; border-bottom:1px solid var(--border); }
+.logo-wrap { background:#fff; border-radius:10px; padding:8px 10px; }
+.logo { height:72px; display:block; }
+.header h1 { margin:0 0 6px 0; font-size:30px; }
+.header p { margin:0; color:var(--muted); }
+.tabs { display:flex; gap:8px; padding:16px 18px 0 18px; flex-wrap:wrap; }
+.tab { padding:10px 14px; border-radius:10px 10px 0 0; background:#102238; border:1px solid var(--border); border-bottom:none; cursor:pointer; font-weight:700; }
+.tab.active { background:var(--panel2); }
+.tab-pane { display:none; padding:0 18px 24px 18px; }
+.tab-pane.active { display:block; }
+.section { margin-top:18px; background:var(--panel2); border:1px solid var(--border); border-radius:14px; padding:22px; }
+h2 { margin:0 0 14px 0; color:#fff; font-size:22px; }
+h3 { margin:18px 0 10px 0; color:var(--accent2); font-size:16px; }
+.grid-4, .grid-3, .chart-grid, .summary-boxes { display:grid; gap:16px; }
+.grid-4 { grid-template-columns:repeat(4,1fr); }
+.grid-3 { grid-template-columns:repeat(3,1fr); }
+.chart-grid { grid-template-columns:1fr 1fr; }
+.summary-boxes { grid-template-columns:repeat(4,1fr); }
+.card, .chart-card, .summary { background:var(--panel3); border:1px solid var(--border); border-radius:12px; padding:15px; }
+.summary .k { font-size:12px; text-transform:uppercase; color:var(--muted); font-weight:700; }
+.summary .v { font-size:28px; font-weight:700; color:#fff; margin-top:8px; }
+label { display:block; font-size:12px; text-transform:uppercase; letter-spacing:.04em; color:var(--muted); margin-bottom:6px; font-weight:700; }
+input, textarea, select { width:100%; padding:11px 12px; border:1px solid var(--border); border-radius:8px; font-size:14px; background:#0d1724; color:var(--text); font-family:Arial,Helvetica,sans-serif; }
+textarea { min-height:180px; resize:vertical; line-height:1.55; }
+table { width:100%; border-collapse:collapse; margin-top:10px; }
+th, td { border:1px solid var(--border); padding:10px; vertical-align:middle; }
+th { background:#0d1a29; color:#fff; text-align:left; }
+.notice { padding:12px 14px; border-radius:10px; background:#132235; border:1px solid var(--border); color:var(--muted); margin-top:12px; }
+@media (max-width: 980px) {
+  .grid-4, .grid-3, .chart-grid, .summary-boxes { grid-template-columns:1fr; }
+}
+@media print {
+  body { background:#fff !important; color:#1f2933 !important; }
+  .topbar, .tabs { display:none !important; }
+  .container { max-width:none !important; margin:0 !important; border:none !important; border-radius:0 !important; box-shadow:none !important; background:#fff !important; }
+  .header { background:linear-gradient(90deg,#fff8f0,#ffffff) !important; border-bottom:3px solid #f28c00 !important; }
+  .header h1, .header p { color:#1f2933 !important; }
+  .tab-pane { display:block !important; padding:0 0 20px 0 !important; page-break-after:always; }
+  .section { background:linear-gradient(180deg,#ffffff,#fff8f0) !important; border:1px solid var(--printBorder) !important; page-break-inside:avoid; }
+  h2 { background:linear-gradient(90deg,#f28c00,#ffb347) !important; color:#fff !important; border-radius:8px !important; padding:10px 14px !important; }
+  h3 { color:#c96f00 !important; }
+  .card, .summary, .chart-card { background:linear-gradient(180deg,#fffaf3,#fff3e3) !important; border:1px solid var(--printBorder) !important; color:#1f2933 !important; }
+  .summary .v { color:#8a4c00 !important; background:#ffe8c7 !important; border:1px solid #efb66d !important; border-radius:8px !important; display:inline-block !important; padding:8px 10px !important; }
+  label, .notice { color:#5a6b7d !important; }
+  input, textarea, select { background:#fffaf3 !important; color:#1f2933 !important; border:1px solid #f1c48b !important; }
+  textarea { background:#fff1df !important; border-left:5px solid #f28c00 !important; min-height:260px !important; }
+  input[readonly] { background:#ffe8c7 !important; color:#8a4c00 !important; font-weight:700 !important; }
+  th { background:linear-gradient(90deg,#f7d4a6,#ffe6c7) !important; color:#8a4c00 !important; border:1px solid #f1c48b !important; }
+  td { background:#fffdfa !important; color:#1f2933 !important; border:1px solid #f3d7b0 !important; }
+}
+</style>
+</head>
+<body>
+<div class="topbar">
+  <div style="display:flex; gap:10px; flex-wrap:wrap;">
+    <button class="btn" onclick="savePortalData()">Save</button>
+    <button class="btn" onclick="loadPortalData()">Load</button>
+    <button class="btn" onclick="downloadFilledHtml()">Save As HTML Document</button>
+    <button class="btn" onclick="generateFebruaryCommentary()">Generate Feb Commentary</button>
+    <button class="btn" onclick="window.print()">Export PDF</button>
+    <button class="btn" onclick="clearPortalData()" style="background:#8b2f2f;">Clear Saved Data</button>
+  </div>
+  <div style="color:#a9b7c8; font-size:13px;" id="saveStatus">Auto-saving enabled. Opportunity values/statuses now drive all pipeline totals.</div>
+</div>
+
+<div class="container">
+  <div class="header">
+    <div class="logo-wrap"><img class="logo" src="data:image/png;base64,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" alt="Hunters Logo"></div>
+    <div>
+      <h1>Hunter Group 2026 Board Reporting Portal</h1>
+      <p>12 monthly HTML pages linked into one automatic yearly report</p>
+    </div>
+  </div>
+
+  <div class="tabs"><div class="tab active" data-tab="month-0">Jan</div>
+<div class="tab " data-tab="month-1">Feb</div>
+<div class="tab " data-tab="month-2">Mar</div>
+<div class="tab " data-tab="month-3">Apr</div>
+<div class="tab " data-tab="month-4">May</div>
+<div class="tab " data-tab="month-5">Jun</div>
+<div class="tab " data-tab="month-6">Jul</div>
+<div class="tab " data-tab="month-7">Aug</div>
+<div class="tab " data-tab="month-8">Sep</div>
+<div class="tab " data-tab="month-9">Oct</div>
+<div class="tab " data-tab="month-10">Nov</div>
+<div class="tab " data-tab="month-11">Dec</div>
+<div class="tab" data-tab="yearly-tab">Yearly Report</div></div>
+
+  
+    <div class="tab-pane active" id="month-0">
+      <div class="section">
+        <h2>January 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m0_month" type="text" value="January"></div>
+          <div class="card"><label>Year</label><input id="m0_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m0_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m0_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m0_ncq" type="number" value="16"></td><td><input id="m0_scq" type="number" value="14"></td><td><input id="m0_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m0_npq" type="number" value="46"></td><td><input id="m0_spq" type="number" value="28"></td><td><input id="m0_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m0_ntq" type="number" readonly></td><td><input id="m0_stq" type="number" readonly></td><td><input id="m0_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m0_ncv" type="number" value="29878" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m0_scv" type="number" value="21298" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m0_npv" type="number" value="635000" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m0_spv" type="number" value="567980" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m0_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m0_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m0_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m0_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m0_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m0_summ">0% / 0%</div></div>
+        </div>
+        <div class="notice" style="margin-top:16px;">February figures have been populated from the February sales report. The source report provides total monthly sales and detailed job lines, rather than a North/South or corrective/project split, so the month has been loaded primarily into the project value field to ensure the yearly roll-up works correctly.</div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m0_pending" readonly type="number" value="635992" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m0_expPipe" readonly type="number" value="350000" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m0_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m0_totPipe" readonly type="number" value="1200000" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m0_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m0_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m0_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m0_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m0_opp_client_0" type="text" value="Crawley Hospital CDiC"></td>
+            <td><input id="m0_opp_detail_0" type="text" value="Nedap Access Control"></td>
+            <td><input id="m0_opp_value_0" class="currency" type="text" value="£133,118.90"></td>
+            <td>
+              <select id="m0_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_1" type="text" value="Kilnwood Vale Commu"></td>
+            <td><input id="m0_opp_detail_1" type="text" value="Security System"></td>
+            <td><input id="m0_opp_value_1" class="currency" type="text" value="£28,120.00"></td>
+            <td>
+              <select id="m0_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_2" type="text" value="BAT Southampton Co"></td>
+            <td><input id="m0_opp_detail_2" type="text" value="CCTV, Access Control"></td>
+            <td><input id="m0_opp_value_2" class="currency" type="text" value="£65,000.00"></td>
+            <td>
+              <select id="m0_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_3" type="text" value="Hazeley Enterprise"></td>
+            <td><input id="m0_opp_detail_3" type="text" value="Security System"></td>
+            <td><input id="m0_opp_value_3" class="currency" type="text" value="£4,277.00"></td>
+            <td>
+              <select id="m0_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_4" type="text" value="MBSE Cardington CC"></td>
+            <td><input id="m0_opp_detail_4" type="text" value="CCTV"></td>
+            <td><input id="m0_opp_value_4" class="currency" type="text" value="£50,000.00"></td>
+            <td>
+              <select id="m0_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_5" type="text" value="Marples Group"></td>
+            <td><input id="m0_opp_detail_5" type="text" value="Gallagher Access Control"></td>
+            <td><input id="m0_opp_value_5" class="currency" type="text" value="£21,004.00"></td>
+            <td>
+              <select id="m0_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_6" type="text" value="Royal Exchange"></td>
+            <td><input id="m0_opp_detail_6" type="text" value="Upgrade"></td>
+            <td><input id="m0_opp_value_6" class="currency" type="text" value="£15,758.00"></td>
+            <td>
+              <select id="m0_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_7" type="text" value="Quilter Upgrade"></td>
+            <td><input id="m0_opp_detail_7" type="text" value="Gallagher Access Control"></td>
+            <td><input id="m0_opp_value_7" class="currency" type="text" value="£289,910.00"></td>
+            <td>
+              <select id="m0_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_8" type="text" value="BAT Lisbon"></td>
+            <td><input id="m0_opp_detail_8" type="text" value="Nedap / Milestone"></td>
+            <td><input id="m0_opp_value_8" class="currency" type="text" value="£32,500.00"></td>
+            <td>
+              <select id="m0_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m0_opp_client_9" type="text" value="BAT Madrid"></td>
+            <td><input id="m0_opp_detail_9" type="text" value="Nedap / Milestone"></td>
+            <td><input id="m0_opp_value_9" class="currency" type="text" value="£28,805.00"></td>
+            <td>
+              <select id="m0_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m0_overview">January delivered strong performance with total quotation value of £1,254,156 and a pipeline of £1,200,000. Activity levels were high across both North and South regions with a focus on project-based opportunities. The business enters Q1 with strong momentum and a solid conversion position.</textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m0_sales">104 quotations were produced during the month. Project quotes (74) significantly exceeded corrective quotes (30), demonstrating a shift towards higher value project work. The North region led performance, with the South contributing steadily. Average quote value was £12,059.</textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m0_pipeline">Pipeline remains strong at £1,200,000 with £635,992 pending and £350,000 expected orders. Key opportunities include Crawley Hospital (£133,118), Quilter (£289,910), and BAT projects across Europe. Expected conversion value is £418,052.</textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m0_strategic">Key opportunities include BAT international projects, Crawley Hospital healthcare project, and enterprise upgrades. Gallagher and Nedap systems continue to support high-value integrated solutions. European projects in Lisbon and Madrid support expansion.</textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m0_risks">Project-based revenue (96%) increases exposure to delays and procurement timelines. Conversion remains key to performance. Resource planning is required for potential project wins. South region requires stronger structure to improve conversion.</textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m0_outlook">Outlook remains positive with strong pipeline into February and March. Focus on converting high-value projects, improving South region performance, and maintaining growth across national and international opportunities. Business is positioned for a strong Q1.</textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m0_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m0_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-1">
+      <div class="section">
+        <h2>February 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m1_month" type="text" value="February"></div>
+          <div class="card"><label>Year</label><input id="m1_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m1_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m1_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m1_ncq" type="number" value="4"></td><td><input id="m1_scq" type="number" value="2"></td><td><input id="m1_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m1_npq" type="number" value="11"></td><td><input id="m1_spq" type="number" value="46"></td><td><input id="m1_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m1_ntq" type="number" readonly></td><td><input id="m1_stq" type="number" readonly></td><td><input id="m1_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m1_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m1_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m1_npv" type="number" value="73477.43" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m1_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m1_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m1_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m1_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m1_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m1_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m1_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m1_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m1_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m1_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m1_totPipe" readonly type="number" value="73477.43" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m1_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m1_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m1_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m1_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m1_opp_client_0" type="text" value="GPA Jarrow 300495"></td>
+            <td><input id="m1_opp_detail_0" type="text" value="Option 2 System Upgrade"></td>
+            <td><input id="m1_opp_value_0" class="currency" type="text" value="£21,492.41"></td>
+            <td>
+              <select id="m1_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_1" type="text" value="GPA Jarrow 218340"></td>
+            <td><input id="m1_opp_detail_1" type="text" value="Supply & Replace Morley ZX5Se"></td>
+            <td><input id="m1_opp_value_1" class="currency" type="text" value="£5,889.12"></td>
+            <td>
+              <select id="m1_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_2" type="text" value="GPA Jarrow 274118.01"></td>
+            <td><input id="m1_opp_detail_2" type="text" value="Supply & Install Galaxy Intruder Alarm"></td>
+            <td><input id="m1_opp_value_2" class="currency" type="text" value="£4,443.32"></td>
+            <td>
+              <select id="m1_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_3" type="text" value="Derry - UoN"></td>
+            <td><input id="m1_opp_detail_3" type="text" value="ZCTC Project"></td>
+            <td><input id="m1_opp_value_3" class="currency" type="text" value="£3,933.72"></td>
+            <td>
+              <select id="m1_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_4" type="text" value="Overton - CRH"></td>
+            <td><input id="m1_opp_detail_4" type="text" value="Childrens Hearing Intercom"></td>
+            <td><input id="m1_opp_value_4" class="currency" type="text" value="£3,272.35"></td>
+            <td>
+              <select id="m1_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_5" type="text" value="Electric Works"></td>
+            <td><input id="m1_opp_detail_5" type="text" value="Supply & Install NPSA Keysafe"></td>
+            <td><input id="m1_opp_value_5" class="currency" type="text" value="£2,408.32"></td>
+            <td>
+              <select id="m1_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_6" type="text" value="Quilter Senator House"></td>
+            <td><input id="m1_opp_detail_6" type="text" value="Installation of Access Control Door"></td>
+            <td><input id="m1_opp_value_6" class="currency" type="text" value="£2,725.99"></td>
+            <td>
+              <select id="m1_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_7" type="text" value="Greenfield House"></td>
+            <td><input id="m1_opp_detail_7" type="text" value="CCTV Security NVR & Display Relocate"></td>
+            <td><input id="m1_opp_value_7" class="currency" type="text" value="£1,439.00"></td>
+            <td>
+              <select id="m1_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_8" type="text" value="CFH001 / CRH"></td>
+            <td><input id="m1_opp_detail_8" type="text" value="Cavendish Disconnect & Reconnect Access Control"></td>
+            <td><input id="m1_opp_value_8" class="currency" type="text" value="£1,466.52"></td>
+            <td>
+              <select id="m1_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m1_opp_client_9" type="text" value="EP Multi Sites"></td>
+            <td><input id="m1_opp_detail_9" type="text" value="Weaverledge / Price Street / Travis Perkins / Deveron / Victoria Works"></td>
+            <td><input id="m1_opp_value_9" class="currency" type="text" value="£6,000.00"></td>
+            <td>
+              <select id="m1_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m1_overview">February delivered a very strong month of sales activity, with 189 total quotes generated across corrective and project opportunities. The month showed a high level of engagement across both North and South, with project-led opportunities continuing to dominate overall activity. This represents a substantial increase in output and demonstrates strong momentum building into March.</textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m1_sales">Quote activity totalled 189, made up of 72 corrective quotes and 117 project quotes. The North generated 115 total quotes, while the South delivered 74, showing strong contribution across both regions. Project activity remained the dominant driver of performance, highlighting a continued focus on higher-value and more strategic opportunities.</textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m1_pipeline">The pipeline remains positive, with a solid bank of live opportunities providing a base for conversion into March. The current profile is weighted towards pending opportunities, however continued focus is required on building early-stage pipeline to maintain future momentum.</textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m1_strategic">Strategically, February continues to demonstrate strong traction in project-led work, supporting the direction of building a scalable and higher-value sales model across integrated systems, access control, CCTV and fire.</textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m1_risks">The key risks remain around conversion and maintaining pipeline depth. As activity levels increase, it is critical that operational planning, RAMS quality and delivery standards continue to improve to maintain client confidence.</textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m1_outlook">The outlook for March is positive. With strong activity levels and a growing pipeline, the focus now is on conversion, maintaining quote volume, and ensuring consistent delivery as the business moves into Q2.</textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m1_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m1_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-2">
+      <div class="section">
+        <h2>March 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m2_month" type="text" value="March"></div>
+          <div class="card"><label>Year</label><input id="m2_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m2_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m2_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m2_ncq" type="number" value="0"></td><td><input id="m2_scq" type="number" value="0"></td><td><input id="m2_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m2_npq" type="number" value="0"></td><td><input id="m2_spq" type="number" value="0"></td><td><input id="m2_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m2_ntq" type="number" readonly></td><td><input id="m2_stq" type="number" readonly></td><td><input id="m2_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m2_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m2_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m2_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m2_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m2_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m2_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m2_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m2_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m2_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m2_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m2_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m2_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m2_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m2_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m2_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m2_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m2_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m2_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m2_opp_client_0" type="text" value=""></td>
+            <td><input id="m2_opp_detail_0" type="text" value=""></td>
+            <td><input id="m2_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_1" type="text" value=""></td>
+            <td><input id="m2_opp_detail_1" type="text" value=""></td>
+            <td><input id="m2_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_2" type="text" value=""></td>
+            <td><input id="m2_opp_detail_2" type="text" value=""></td>
+            <td><input id="m2_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_3" type="text" value=""></td>
+            <td><input id="m2_opp_detail_3" type="text" value=""></td>
+            <td><input id="m2_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_4" type="text" value=""></td>
+            <td><input id="m2_opp_detail_4" type="text" value=""></td>
+            <td><input id="m2_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_5" type="text" value=""></td>
+            <td><input id="m2_opp_detail_5" type="text" value=""></td>
+            <td><input id="m2_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_6" type="text" value=""></td>
+            <td><input id="m2_opp_detail_6" type="text" value=""></td>
+            <td><input id="m2_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_7" type="text" value=""></td>
+            <td><input id="m2_opp_detail_7" type="text" value=""></td>
+            <td><input id="m2_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_8" type="text" value=""></td>
+            <td><input id="m2_opp_detail_8" type="text" value=""></td>
+            <td><input id="m2_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m2_opp_client_9" type="text" value=""></td>
+            <td><input id="m2_opp_detail_9" type="text" value=""></td>
+            <td><input id="m2_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m2_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m2_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m2_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m2_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m2_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m2_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m2_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m2_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m2_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-3">
+      <div class="section">
+        <h2>April 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m3_month" type="text" value="April"></div>
+          <div class="card"><label>Year</label><input id="m3_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m3_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m3_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m3_ncq" type="number" value="0"></td><td><input id="m3_scq" type="number" value="0"></td><td><input id="m3_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m3_npq" type="number" value="0"></td><td><input id="m3_spq" type="number" value="0"></td><td><input id="m3_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m3_ntq" type="number" readonly></td><td><input id="m3_stq" type="number" readonly></td><td><input id="m3_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m3_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m3_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m3_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m3_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m3_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m3_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m3_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m3_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m3_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m3_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m3_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m3_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m3_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m3_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m3_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m3_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m3_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m3_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m3_opp_client_0" type="text" value=""></td>
+            <td><input id="m3_opp_detail_0" type="text" value=""></td>
+            <td><input id="m3_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_1" type="text" value=""></td>
+            <td><input id="m3_opp_detail_1" type="text" value=""></td>
+            <td><input id="m3_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_2" type="text" value=""></td>
+            <td><input id="m3_opp_detail_2" type="text" value=""></td>
+            <td><input id="m3_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_3" type="text" value=""></td>
+            <td><input id="m3_opp_detail_3" type="text" value=""></td>
+            <td><input id="m3_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_4" type="text" value=""></td>
+            <td><input id="m3_opp_detail_4" type="text" value=""></td>
+            <td><input id="m3_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_5" type="text" value=""></td>
+            <td><input id="m3_opp_detail_5" type="text" value=""></td>
+            <td><input id="m3_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_6" type="text" value=""></td>
+            <td><input id="m3_opp_detail_6" type="text" value=""></td>
+            <td><input id="m3_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_7" type="text" value=""></td>
+            <td><input id="m3_opp_detail_7" type="text" value=""></td>
+            <td><input id="m3_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_8" type="text" value=""></td>
+            <td><input id="m3_opp_detail_8" type="text" value=""></td>
+            <td><input id="m3_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m3_opp_client_9" type="text" value=""></td>
+            <td><input id="m3_opp_detail_9" type="text" value=""></td>
+            <td><input id="m3_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m3_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m3_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m3_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m3_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m3_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m3_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m3_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m3_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m3_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-4">
+      <div class="section">
+        <h2>May 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m4_month" type="text" value="May"></div>
+          <div class="card"><label>Year</label><input id="m4_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m4_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m4_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m4_ncq" type="number" value="0"></td><td><input id="m4_scq" type="number" value="0"></td><td><input id="m4_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m4_npq" type="number" value="0"></td><td><input id="m4_spq" type="number" value="0"></td><td><input id="m4_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m4_ntq" type="number" readonly></td><td><input id="m4_stq" type="number" readonly></td><td><input id="m4_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m4_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m4_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m4_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m4_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m4_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m4_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m4_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m4_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m4_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m4_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m4_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m4_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m4_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m4_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m4_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m4_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m4_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m4_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m4_opp_client_0" type="text" value=""></td>
+            <td><input id="m4_opp_detail_0" type="text" value=""></td>
+            <td><input id="m4_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_1" type="text" value=""></td>
+            <td><input id="m4_opp_detail_1" type="text" value=""></td>
+            <td><input id="m4_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_2" type="text" value=""></td>
+            <td><input id="m4_opp_detail_2" type="text" value=""></td>
+            <td><input id="m4_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_3" type="text" value=""></td>
+            <td><input id="m4_opp_detail_3" type="text" value=""></td>
+            <td><input id="m4_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_4" type="text" value=""></td>
+            <td><input id="m4_opp_detail_4" type="text" value=""></td>
+            <td><input id="m4_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_5" type="text" value=""></td>
+            <td><input id="m4_opp_detail_5" type="text" value=""></td>
+            <td><input id="m4_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_6" type="text" value=""></td>
+            <td><input id="m4_opp_detail_6" type="text" value=""></td>
+            <td><input id="m4_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_7" type="text" value=""></td>
+            <td><input id="m4_opp_detail_7" type="text" value=""></td>
+            <td><input id="m4_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_8" type="text" value=""></td>
+            <td><input id="m4_opp_detail_8" type="text" value=""></td>
+            <td><input id="m4_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m4_opp_client_9" type="text" value=""></td>
+            <td><input id="m4_opp_detail_9" type="text" value=""></td>
+            <td><input id="m4_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m4_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m4_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m4_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m4_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m4_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m4_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m4_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m4_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m4_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-5">
+      <div class="section">
+        <h2>June 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m5_month" type="text" value="June"></div>
+          <div class="card"><label>Year</label><input id="m5_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m5_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m5_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m5_ncq" type="number" value="0"></td><td><input id="m5_scq" type="number" value="0"></td><td><input id="m5_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m5_npq" type="number" value="0"></td><td><input id="m5_spq" type="number" value="0"></td><td><input id="m5_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m5_ntq" type="number" readonly></td><td><input id="m5_stq" type="number" readonly></td><td><input id="m5_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m5_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m5_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m5_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m5_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m5_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m5_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m5_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m5_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m5_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m5_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m5_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m5_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m5_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m5_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m5_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m5_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m5_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m5_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m5_opp_client_0" type="text" value=""></td>
+            <td><input id="m5_opp_detail_0" type="text" value=""></td>
+            <td><input id="m5_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_1" type="text" value=""></td>
+            <td><input id="m5_opp_detail_1" type="text" value=""></td>
+            <td><input id="m5_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_2" type="text" value=""></td>
+            <td><input id="m5_opp_detail_2" type="text" value=""></td>
+            <td><input id="m5_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_3" type="text" value=""></td>
+            <td><input id="m5_opp_detail_3" type="text" value=""></td>
+            <td><input id="m5_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_4" type="text" value=""></td>
+            <td><input id="m5_opp_detail_4" type="text" value=""></td>
+            <td><input id="m5_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_5" type="text" value=""></td>
+            <td><input id="m5_opp_detail_5" type="text" value=""></td>
+            <td><input id="m5_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_6" type="text" value=""></td>
+            <td><input id="m5_opp_detail_6" type="text" value=""></td>
+            <td><input id="m5_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_7" type="text" value=""></td>
+            <td><input id="m5_opp_detail_7" type="text" value=""></td>
+            <td><input id="m5_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_8" type="text" value=""></td>
+            <td><input id="m5_opp_detail_8" type="text" value=""></td>
+            <td><input id="m5_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m5_opp_client_9" type="text" value=""></td>
+            <td><input id="m5_opp_detail_9" type="text" value=""></td>
+            <td><input id="m5_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m5_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m5_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m5_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m5_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m5_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m5_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m5_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m5_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m5_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-6">
+      <div class="section">
+        <h2>July 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m6_month" type="text" value="July"></div>
+          <div class="card"><label>Year</label><input id="m6_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m6_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m6_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m6_ncq" type="number" value="0"></td><td><input id="m6_scq" type="number" value="0"></td><td><input id="m6_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m6_npq" type="number" value="0"></td><td><input id="m6_spq" type="number" value="0"></td><td><input id="m6_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m6_ntq" type="number" readonly></td><td><input id="m6_stq" type="number" readonly></td><td><input id="m6_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m6_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m6_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m6_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m6_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m6_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m6_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m6_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m6_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m6_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m6_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m6_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m6_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m6_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m6_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m6_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m6_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m6_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m6_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m6_opp_client_0" type="text" value=""></td>
+            <td><input id="m6_opp_detail_0" type="text" value=""></td>
+            <td><input id="m6_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_1" type="text" value=""></td>
+            <td><input id="m6_opp_detail_1" type="text" value=""></td>
+            <td><input id="m6_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_2" type="text" value=""></td>
+            <td><input id="m6_opp_detail_2" type="text" value=""></td>
+            <td><input id="m6_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_3" type="text" value=""></td>
+            <td><input id="m6_opp_detail_3" type="text" value=""></td>
+            <td><input id="m6_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_4" type="text" value=""></td>
+            <td><input id="m6_opp_detail_4" type="text" value=""></td>
+            <td><input id="m6_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_5" type="text" value=""></td>
+            <td><input id="m6_opp_detail_5" type="text" value=""></td>
+            <td><input id="m6_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_6" type="text" value=""></td>
+            <td><input id="m6_opp_detail_6" type="text" value=""></td>
+            <td><input id="m6_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_7" type="text" value=""></td>
+            <td><input id="m6_opp_detail_7" type="text" value=""></td>
+            <td><input id="m6_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_8" type="text" value=""></td>
+            <td><input id="m6_opp_detail_8" type="text" value=""></td>
+            <td><input id="m6_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m6_opp_client_9" type="text" value=""></td>
+            <td><input id="m6_opp_detail_9" type="text" value=""></td>
+            <td><input id="m6_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m6_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m6_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m6_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m6_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m6_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m6_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m6_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m6_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m6_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-7">
+      <div class="section">
+        <h2>August 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m7_month" type="text" value="August"></div>
+          <div class="card"><label>Year</label><input id="m7_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m7_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m7_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m7_ncq" type="number" value="0"></td><td><input id="m7_scq" type="number" value="0"></td><td><input id="m7_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m7_npq" type="number" value="0"></td><td><input id="m7_spq" type="number" value="0"></td><td><input id="m7_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m7_ntq" type="number" readonly></td><td><input id="m7_stq" type="number" readonly></td><td><input id="m7_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m7_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m7_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m7_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m7_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m7_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m7_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m7_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m7_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m7_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m7_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m7_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m7_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m7_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m7_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m7_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m7_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m7_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m7_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m7_opp_client_0" type="text" value=""></td>
+            <td><input id="m7_opp_detail_0" type="text" value=""></td>
+            <td><input id="m7_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_1" type="text" value=""></td>
+            <td><input id="m7_opp_detail_1" type="text" value=""></td>
+            <td><input id="m7_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_2" type="text" value=""></td>
+            <td><input id="m7_opp_detail_2" type="text" value=""></td>
+            <td><input id="m7_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_3" type="text" value=""></td>
+            <td><input id="m7_opp_detail_3" type="text" value=""></td>
+            <td><input id="m7_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_4" type="text" value=""></td>
+            <td><input id="m7_opp_detail_4" type="text" value=""></td>
+            <td><input id="m7_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_5" type="text" value=""></td>
+            <td><input id="m7_opp_detail_5" type="text" value=""></td>
+            <td><input id="m7_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_6" type="text" value=""></td>
+            <td><input id="m7_opp_detail_6" type="text" value=""></td>
+            <td><input id="m7_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_7" type="text" value=""></td>
+            <td><input id="m7_opp_detail_7" type="text" value=""></td>
+            <td><input id="m7_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_8" type="text" value=""></td>
+            <td><input id="m7_opp_detail_8" type="text" value=""></td>
+            <td><input id="m7_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m7_opp_client_9" type="text" value=""></td>
+            <td><input id="m7_opp_detail_9" type="text" value=""></td>
+            <td><input id="m7_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m7_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m7_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m7_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m7_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m7_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m7_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m7_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m7_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m7_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-8">
+      <div class="section">
+        <h2>September 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m8_month" type="text" value="September"></div>
+          <div class="card"><label>Year</label><input id="m8_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m8_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m8_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m8_ncq" type="number" value="0"></td><td><input id="m8_scq" type="number" value="0"></td><td><input id="m8_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m8_npq" type="number" value="0"></td><td><input id="m8_spq" type="number" value="0"></td><td><input id="m8_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m8_ntq" type="number" readonly></td><td><input id="m8_stq" type="number" readonly></td><td><input id="m8_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m8_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m8_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m8_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m8_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m8_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m8_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m8_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m8_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m8_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m8_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m8_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m8_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m8_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m8_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m8_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m8_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m8_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m8_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m8_opp_client_0" type="text" value=""></td>
+            <td><input id="m8_opp_detail_0" type="text" value=""></td>
+            <td><input id="m8_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_1" type="text" value=""></td>
+            <td><input id="m8_opp_detail_1" type="text" value=""></td>
+            <td><input id="m8_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_2" type="text" value=""></td>
+            <td><input id="m8_opp_detail_2" type="text" value=""></td>
+            <td><input id="m8_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_3" type="text" value=""></td>
+            <td><input id="m8_opp_detail_3" type="text" value=""></td>
+            <td><input id="m8_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_4" type="text" value=""></td>
+            <td><input id="m8_opp_detail_4" type="text" value=""></td>
+            <td><input id="m8_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_5" type="text" value=""></td>
+            <td><input id="m8_opp_detail_5" type="text" value=""></td>
+            <td><input id="m8_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_6" type="text" value=""></td>
+            <td><input id="m8_opp_detail_6" type="text" value=""></td>
+            <td><input id="m8_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_7" type="text" value=""></td>
+            <td><input id="m8_opp_detail_7" type="text" value=""></td>
+            <td><input id="m8_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_8" type="text" value=""></td>
+            <td><input id="m8_opp_detail_8" type="text" value=""></td>
+            <td><input id="m8_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m8_opp_client_9" type="text" value=""></td>
+            <td><input id="m8_opp_detail_9" type="text" value=""></td>
+            <td><input id="m8_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m8_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m8_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m8_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m8_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m8_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m8_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m8_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m8_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m8_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-9">
+      <div class="section">
+        <h2>October 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m9_month" type="text" value="October"></div>
+          <div class="card"><label>Year</label><input id="m9_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m9_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m9_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m9_ncq" type="number" value="0"></td><td><input id="m9_scq" type="number" value="0"></td><td><input id="m9_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m9_npq" type="number" value="0"></td><td><input id="m9_spq" type="number" value="0"></td><td><input id="m9_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m9_ntq" type="number" readonly></td><td><input id="m9_stq" type="number" readonly></td><td><input id="m9_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m9_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m9_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m9_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m9_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m9_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m9_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m9_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m9_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m9_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m9_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m9_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m9_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m9_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m9_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m9_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m9_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m9_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m9_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m9_opp_client_0" type="text" value=""></td>
+            <td><input id="m9_opp_detail_0" type="text" value=""></td>
+            <td><input id="m9_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_1" type="text" value=""></td>
+            <td><input id="m9_opp_detail_1" type="text" value=""></td>
+            <td><input id="m9_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_2" type="text" value=""></td>
+            <td><input id="m9_opp_detail_2" type="text" value=""></td>
+            <td><input id="m9_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_3" type="text" value=""></td>
+            <td><input id="m9_opp_detail_3" type="text" value=""></td>
+            <td><input id="m9_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_4" type="text" value=""></td>
+            <td><input id="m9_opp_detail_4" type="text" value=""></td>
+            <td><input id="m9_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_5" type="text" value=""></td>
+            <td><input id="m9_opp_detail_5" type="text" value=""></td>
+            <td><input id="m9_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_6" type="text" value=""></td>
+            <td><input id="m9_opp_detail_6" type="text" value=""></td>
+            <td><input id="m9_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_7" type="text" value=""></td>
+            <td><input id="m9_opp_detail_7" type="text" value=""></td>
+            <td><input id="m9_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_8" type="text" value=""></td>
+            <td><input id="m9_opp_detail_8" type="text" value=""></td>
+            <td><input id="m9_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m9_opp_client_9" type="text" value=""></td>
+            <td><input id="m9_opp_detail_9" type="text" value=""></td>
+            <td><input id="m9_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m9_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m9_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m9_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m9_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m9_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m9_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m9_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m9_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m9_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-10">
+      <div class="section">
+        <h2>November 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m10_month" type="text" value="November"></div>
+          <div class="card"><label>Year</label><input id="m10_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m10_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m10_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m10_ncq" type="number" value="0"></td><td><input id="m10_scq" type="number" value="0"></td><td><input id="m10_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m10_npq" type="number" value="0"></td><td><input id="m10_spq" type="number" value="0"></td><td><input id="m10_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m10_ntq" type="number" readonly></td><td><input id="m10_stq" type="number" readonly></td><td><input id="m10_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m10_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m10_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m10_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m10_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m10_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m10_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m10_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m10_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m10_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m10_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m10_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m10_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m10_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m10_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m10_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m10_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m10_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m10_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m10_opp_client_0" type="text" value=""></td>
+            <td><input id="m10_opp_detail_0" type="text" value=""></td>
+            <td><input id="m10_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_1" type="text" value=""></td>
+            <td><input id="m10_opp_detail_1" type="text" value=""></td>
+            <td><input id="m10_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_2" type="text" value=""></td>
+            <td><input id="m10_opp_detail_2" type="text" value=""></td>
+            <td><input id="m10_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_3" type="text" value=""></td>
+            <td><input id="m10_opp_detail_3" type="text" value=""></td>
+            <td><input id="m10_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_4" type="text" value=""></td>
+            <td><input id="m10_opp_detail_4" type="text" value=""></td>
+            <td><input id="m10_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_5" type="text" value=""></td>
+            <td><input id="m10_opp_detail_5" type="text" value=""></td>
+            <td><input id="m10_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_6" type="text" value=""></td>
+            <td><input id="m10_opp_detail_6" type="text" value=""></td>
+            <td><input id="m10_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_7" type="text" value=""></td>
+            <td><input id="m10_opp_detail_7" type="text" value=""></td>
+            <td><input id="m10_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_8" type="text" value=""></td>
+            <td><input id="m10_opp_detail_8" type="text" value=""></td>
+            <td><input id="m10_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m10_opp_client_9" type="text" value=""></td>
+            <td><input id="m10_opp_detail_9" type="text" value=""></td>
+            <td><input id="m10_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m10_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m10_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m10_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m10_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m10_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m10_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m10_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m10_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m10_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+    <div class="tab-pane " id="month-11">
+      <div class="section">
+        <h2>December 2026 Report Details</h2>
+        <div class="grid-4">
+          <div class="card"><label>Month</label><input id="m11_month" type="text" value="December"></div>
+          <div class="card"><label>Year</label><input id="m11_year" type="text" value="2026"></div>
+          <div class="card"><label>Prepared By</label><input id="m11_prepared" type="text" value="Nick Timm"></div>
+          <div class="card"><label>Division</label><input id="m11_division" type="text" value="Group"></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Activity</h2>
+        <table>
+          <thead><tr><th>Category</th><th>North</th><th>South</th><th>Total</th></tr></thead>
+          <tbody>
+            <tr><td>Corrective Quotes</td><td><input id="m11_ncq" type="number" value="0"></td><td><input id="m11_scq" type="number" value="0"></td><td><input id="m11_tcq" type="number" readonly></td></tr>
+            <tr><td>Project Quotes</td><td><input id="m11_npq" type="number" value="0"></td><td><input id="m11_spq" type="number" value="0"></td><td><input id="m11_tpq" type="number" readonly></td></tr>
+            <tr><td><strong>Total Quotes</strong></td><td><input id="m11_ntq" type="number" readonly></td><td><input id="m11_stq" type="number" readonly></td><td><input id="m11_gtq" type="number" readonly></td></tr>
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Quotation Values</h2>
+        <table>
+          <thead><tr><th>Category</th><th>Value (£)</th></tr></thead>
+          <tbody>
+            <tr><td>North Corrective</td><td><input id="m11_ncv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Corrective</td><td><input id="m11_scv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>North Projects</td><td><input id="m11_npv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td>South Projects</td><td><input id="m11_spv" type="number" value="0" step="0.01"></td></tr>
+            <tr><td><strong>Total Quotation Value</strong></td><td><input id="m11_tqv" type="text" readonly></td></tr>
+            <tr><td><strong>Expected Orders (1 in 3 conversion)</strong></td><td><input id="m11_eov" type="text" readonly></td></tr>
+          </tbody>
+        </table>
+        <div class="summary-boxes">
+          <div class="summary"><div class="k">Total Quotation Value</div><div class="v" id="m11_sumq">£0</div></div>
+          <div class="summary"><div class="k">Expected Orders</div><div class="v" id="m11_sume">£0</div></div>
+          <div class="summary"><div class="k">Average Quote Value</div><div class="v" id="m11_suma">£0</div></div>
+          <div class="summary"><div class="k">Project vs Corrective Mix</div><div class="v" id="m11_summ">0% / 0%</div></div>
+        </div>
+      </div>
+
+      <div class="section">
+        <h2>Pipeline & Opportunities</h2><div class="notice">These totals now calculate automatically from the 10 opportunity rows below. Edit the opportunity values and statuses only.</div>
+        <div class="grid-4">
+          <div class="card"><label>Pending (£) - Auto Total</label><input id="m11_pending" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Expected (£) - Auto Total</label><input id="m11_expPipe" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Lost (£) - Auto Total</label><input id="m11_lost" readonly type="number" value="0" step="0.01"></div>
+          <div class="card"><label>Total Opportunities (£) - Auto Total</label><input id="m11_totPipe" readonly type="number" value="0" step="0.01"></div>
+        </div>
+        <div class="summary-boxes" style="margin-top:16px;">
+          <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="m11_oppTotal">£0</div></div>
+          <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="m11_oppPending">£0</div></div>
+          <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="m11_oppExpected">£0</div></div>
+          <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="m11_oppOrderIn">£0</div></div>
+        </div>
+
+        <h3>Key New / Ongoing Opportunities</h3>
+        <table>
+          <thead><tr><th>Client</th><th>Project / Details</th><th>Value (£)</th><th>Status</th></tr></thead>
+          <tbody>
+            
+          <tr>
+            <td><input id="m11_opp_client_0" type="text" value=""></td>
+            <td><input id="m11_opp_detail_0" type="text" value=""></td>
+            <td><input id="m11_opp_value_0" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_0">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_1" type="text" value=""></td>
+            <td><input id="m11_opp_detail_1" type="text" value=""></td>
+            <td><input id="m11_opp_value_1" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_1">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_2" type="text" value=""></td>
+            <td><input id="m11_opp_detail_2" type="text" value=""></td>
+            <td><input id="m11_opp_value_2" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_2">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_3" type="text" value=""></td>
+            <td><input id="m11_opp_detail_3" type="text" value=""></td>
+            <td><input id="m11_opp_value_3" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_3">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_4" type="text" value=""></td>
+            <td><input id="m11_opp_detail_4" type="text" value=""></td>
+            <td><input id="m11_opp_value_4" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_4">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_5" type="text" value=""></td>
+            <td><input id="m11_opp_detail_5" type="text" value=""></td>
+            <td><input id="m11_opp_value_5" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_5">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_6" type="text" value=""></td>
+            <td><input id="m11_opp_detail_6" type="text" value=""></td>
+            <td><input id="m11_opp_value_6" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_6">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_7" type="text" value=""></td>
+            <td><input id="m11_opp_detail_7" type="text" value=""></td>
+            <td><input id="m11_opp_value_7" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_7">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_8" type="text" value=""></td>
+            <td><input id="m11_opp_detail_8" type="text" value=""></td>
+            <td><input id="m11_opp_value_8" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_8">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          <tr>
+            <td><input id="m11_opp_client_9" type="text" value=""></td>
+            <td><input id="m11_opp_detail_9" type="text" value=""></td>
+            <td><input id="m11_opp_value_9" class="currency" type="text" value="£0.00"></td>
+            <td>
+              <select id="m11_opp_status_9">
+                <option selected>Pending</option>
+                <option >Expected</option>
+                <option >Order In</option>
+                <option >Lost</option>
+              </select>
+            </td>
+          </tr>
+        
+          </tbody>
+        </table>
+      </div>
+
+      <div class="section">
+        <h2>Board Commentary</h2>
+        <h3>Overview</h3>
+        <textarea id="m11_overview"></textarea>
+        <h3>Sales & Activity</h3>
+        <textarea id="m11_sales"></textarea>
+        <h3>Pipeline Strength</h3>
+        <textarea id="m11_pipeline"></textarea>
+        <h3>Strategic Opportunities</h3>
+        <textarea id="m11_strategic"></textarea>
+        <h3>Risks / Challenges</h3>
+        <textarea id="m11_risks"></textarea>
+        <h3>Forward Outlook</h3>
+        <textarea id="m11_outlook"></textarea>
+      </div>
+
+      <div class="section">
+        <h2>Monthly Charts</h2>
+        <div class="chart-grid">
+          <div class="chart-card"><h3>Quotation Value by Category</h3><canvas id="m11_quoteChart" height="200"></canvas></div>
+          <div class="chart-card"><h3>Pipeline Breakdown</h3><canvas id="m11_pipeChart" height="200"></canvas></div>
+        </div>
+      </div>
+    </div>
+    
+
+  <div class="tab-pane" id="yearly-tab">
+    <div class="section">
+      <h2>2026 Yearly Report</h2>
+      <div class="notice">Everything below now adds together automatically from all 12 monthly pages, including quotation values, quote counts, pipeline values, and opportunity totals by status.</div>
+      <div class="summary-boxes">
+        <div class="summary"><div class="k">Yearly Quoted Value</div><div class="v" id="yrQuoted">£0</div></div>
+        <div class="summary"><div class="k">Yearly Expected Orders</div><div class="v" id="yrExpected">£0</div></div>
+        <div class="summary"><div class="k">Yearly Quote Count</div><div class="v" id="yrQuotes">0</div></div>
+        <div class="summary"><div class="k">Average Monthly Quoted</div><div class="v" id="yrAvg">£0</div></div>
+      </div>
+
+      <div class="summary-boxes" style="margin-top:16px;">
+        <div class="summary"><div class="k">Yearly Pending Pipeline</div><div class="v" id="yrPending">£0</div></div>
+        <div class="summary"><div class="k">Yearly Expected Pipeline</div><div class="v" id="yrExpPipe">£0</div></div>
+        <div class="summary"><div class="k">Yearly Lost Pipeline</div><div class="v" id="yrLost">£0</div></div>
+        <div class="summary"><div class="k">Yearly Total Pipeline</div><div class="v" id="yrTotalPipe">£0</div></div>
+      </div>
+
+      <div class="summary-boxes" style="margin-top:16px;">
+        <div class="summary"><div class="k">Opportunity Total</div><div class="v" id="yrOppTotal">£0</div></div>
+        <div class="summary"><div class="k">Pending Opportunities</div><div class="v" id="yrOppPending">£0</div></div>
+        <div class="summary"><div class="k">Expected Opportunities</div><div class="v" id="yrOppExpected">£0</div></div>
+        <div class="summary"><div class="k">Order In Opportunities</div><div class="v" id="yrOppOrderIn">£0</div></div>
+      </div>
+
+      <div class="chart-grid">
+        <div class="chart-card"><h3>Quoted Value by Month</h3><canvas id="yearValueChart" height="220"></canvas></div>
+        <div class="chart-card"><h3>Quote Count by Month</h3><canvas id="yearCountChart" height="220"></canvas></div>
+      </div>
+      <div class="chart-grid" style="margin-top:16px;">
+        <div class="chart-card"><h3>Expected Orders by Month</h3><canvas id="yearExpectedChart" height="220"></canvas></div>
+        <div class="chart-card"><h3>Total Pipeline by Month</h3><canvas id="yearPipelineChart" height="220"></canvas></div>
+      </div>
+
+      <div class="section" style="margin-top:18px;">
+        <h2>Yearly Totals Table</h2>
+        <table>
+          <thead>
+            <tr>
+              <th>Month</th>
+              <th>Quoted Value</th>
+              <th>Expected Orders</th>
+              <th>Quote Count</th>
+              <th>Total Pipeline</th>
+              <th>Opportunity Total</th>
+            </tr>
+          </thead>
+          <tbody id="yearlyTableBody"></tbody>
+        </table>
+      </div>
+
+      <div class="section" style="margin-top:18px;">
+        <h2>Yearly Commentary</h2>
+        <textarea id="yearCommentary">This section updates automatically as monthly figures are completed. Use it for board-level yearly summary commentary.</textarea>
+      </div>
+    </div>
+  </div>
+</div>
+
+<script>
+const months = ['January 2026', 'February 2026', 'March 2026', 'April 2026', 'May 2026', 'June 2026', 'July 2026', 'August 2026', 'September 2026', 'October 2026', 'November 2026', 'December 2026'];
+
+document.querySelectorAll('.tab').forEach(tab => {
+  tab.addEventListener('click', () => {
+    document.querySelectorAll('.tab').forEach(t => t.classList.remove('active'));
+    document.querySelectorAll('.tab-pane').forEach(p => p.classList.remove('active'));
+    tab.classList.add('active');
+    document.getElementById(tab.dataset.tab).classList.add('active');
+  });
+});
+
+function n(v) {
+  const x = parseFloat(String(v).replace(/[^0-9.-]/g, ''));
+  return isNaN(x) ? 0 : x;
+}
+function gbp(v) {
+  return new Intl.NumberFormat('en-GB', {style:'currency', currency:'GBP', maximumFractionDigits:0}).format(v || 0);
+}
+function gbp2(v) {
+  return new Intl.NumberFormat('en-GB', {style:'currency', currency:'GBP', minimumFractionDigits:2, maximumFractionDigits:2}).format(v || 0);
+}
+
+function wireCurrencyInputs() {
+  document.querySelectorAll('.currency').forEach(el => {
+    el.addEventListener('focus', () => {
+      el.value = el.value.replace(/[^0-9.\-]/g, '');
+    });
+    el.addEventListener('blur', () => {
+      const value = n(el.value);
+      el.value = el.value.trim() === '' ? '' : gbp2(value);
+      recalcYear();
+    });
+  });
+}
+wireCurrencyInputs();
+
+const monthlyQuoteCharts = [];
+const monthlyPipeCharts = [];
+for (let i=0;i<12;i++) {
+  monthlyQuoteCharts[i] = new Chart(document.getElementById(`m${i}_quoteChart`).getContext('2d'), {
+    type:'bar',
+    data:{ labels:['North Corrective','South Corrective','North Projects','South Projects'], datasets:[{ data:[0,0,0,0], backgroundColor:['#335f8f','#f28c00','#1a2d44','#5e88b6'], borderRadius:6 }] },
+    options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+  });
+  monthlyPipeCharts[i] = new Chart(document.getElementById(`m${i}_pipeChart`).getContext('2d'), {
+    type:'doughnut',
+    data:{ labels:['Pending','Expected Orders','Lost','Total Pipeline'], datasets:[{ data:[0,0,0,0], backgroundColor:['#335f8f','#f28c00','#8b2f2f','#5e88b6'] }] },
+    options:{ plugins:{ legend:{ position:'bottom' } } }
+  });
+}
+
+const yearValueChart = new Chart(document.getElementById('yearValueChart').getContext('2d'), {
+  type:'bar',
+  data:{ labels:months.map(m=>m.split(' ')[0].slice(0,3)), datasets:[{ data:Array(12).fill(0), backgroundColor:'#f28c00', borderRadius:6 }] },
+  options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+});
+const yearCountChart = new Chart(document.getElementById('yearCountChart').getContext('2d'), {
+  type:'line',
+  data:{ labels:months.map(m=>m.split(' ')[0].slice(0,3)), datasets:[{ data:Array(12).fill(0), borderColor:'#5e88b6', backgroundColor:'rgba(94,136,182,.15)', fill:true, tension:.25 }] },
+  options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+});
+const yearExpectedChart = new Chart(document.getElementById('yearExpectedChart').getContext('2d'), {
+  type:'bar',
+  data:{ labels:months.map(m=>m.split(' ')[0].slice(0,3)), datasets:[{ data:Array(12).fill(0), backgroundColor:'#335f8f', borderRadius:6 }] },
+  options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+});
+const yearPipelineChart = new Chart(document.getElementById('yearPipelineChart').getContext('2d'), {
+  type:'line',
+  data:{ labels:months.map(m=>m.split(' ')[0].slice(0,3)), datasets:[{ data:Array(12).fill(0), borderColor:'#f28c00', backgroundColor:'rgba(242,140,0,.15)', fill:true, tension:.25 }] },
+  options:{ plugins:{ legend:{ display:false } }, scales:{ y:{ beginAtZero:true } } }
+});
+
+function recalcMonth(i) {
+  const ncq = n(document.getElementById(`m${i}_ncq`).value);
+  const scq = n(document.getElementById(`m${i}_scq`).value);
+  const npq = n(document.getElementById(`m${i}_npq`).value);
+  const spq = n(document.getElementById(`m${i}_spq`).value);
+
+  document.getElementById(`m${i}_tcq`).value = ncq + scq;
+  document.getElementById(`m${i}_tpq`).value = npq + spq;
+  document.getElementById(`m${i}_ntq`).value = ncq + npq;
+  document.getElementById(`m${i}_stq`).value = scq + spq;
+
+  const totalQuotes = ncq + scq + npq + spq;
+  document.getElementById(`m${i}_gtq`).value = totalQuotes;
+
+  const ncv = n(document.getElementById(`m${i}_ncv`).value);
+  const scv = n(document.getElementById(`m${i}_scv`).value);
+  const npv = n(document.getElementById(`m${i}_npv`).value);
+  const spv = n(document.getElementById(`m${i}_spv`).value);
+
+  const totalQuoted = ncv + scv + npv + spv;
+  const expected = totalQuoted / 3;
+  const avg = totalQuotes > 0 ? totalQuoted / totalQuotes : 0;
+  const projectTotal = npv + spv;
+  const correctiveTotal = ncv + scv;
+  const mixProject = totalQuoted > 0 ? Math.round(projectTotal / totalQuoted * 100) : 0;
+  const mixCorrective = totalQuoted > 0 ? Math.round(correctiveTotal / totalQuoted * 100) : 0;
+
+  document.getElementById(`m${i}_tqv`).value = gbp2(totalQuoted);
+  document.getElementById(`m${i}_eov`).value = gbp2(expected);
+  document.getElementById(`m${i}_sumq`).innerText = gbp(totalQuoted);
+  document.getElementById(`m${i}_sume`).innerText = gbp(expected);
+  document.getElementById(`m${i}_suma`).innerText = gbp(avg);
+  document.getElementById(`m${i}_summ`).innerText = `${mixProject}% / ${mixCorrective}%`;
+
+  let oppTotal = 0;
+  let oppPending = 0;
+  let oppExpected = 0;
+  let oppOrderIn = 0;
+  let oppLost = 0;
+
+  for (let r = 0; r < 10; r++) {
+    const val = n(document.getElementById(`m${i}_opp_value_${r}`).value);
+    const status = document.getElementById(`m${i}_opp_status_${r}`).value;
+
+    oppTotal += val;
+    if (status === 'Pending') oppPending += val;
+    else if (status === 'Expected') oppExpected += val;
+    else if (status === 'Order In') oppOrderIn += val;
+    else if (status === 'Lost') oppLost += val;
+  }
+
+  // Pipeline is now fully driven by the opportunities table
+  const pending = oppPending;
+  const expPipe = oppExpected;
+  const lost = oppLost;
+  const totPipe = oppTotal;
+
+  document.getElementById(`m${i}_pending`).value = pending.toFixed(2);
+  document.getElementById(`m${i}_expPipe`).value = expPipe.toFixed(2);
+  document.getElementById(`m${i}_lost`).value = lost.toFixed(2);
+  document.getElementById(`m${i}_totPipe`).value = totPipe.toFixed(2);
+
+  document.getElementById(`m${i}_oppTotal`).innerText = gbp(oppTotal);
+  document.getElementById(`m${i}_oppPending`).innerText = gbp(oppPending);
+  document.getElementById(`m${i}_oppExpected`).innerText = gbp(oppExpected);
+  document.getElementById(`m${i}_oppOrderIn`).innerText = gbp(oppOrderIn);
+
+  monthlyQuoteCharts[i].data.datasets[0].data = [ncv, scv, npv, spv];
+  monthlyQuoteCharts[i].update();
+
+  monthlyPipeCharts[i].data.datasets[0].data = [pending, expPipe, lost, totPipe];
+  monthlyPipeCharts[i].update();
+
+  return { totalQuoted, expected, totalQuotes, pending, expPipe, lost, totPipe, oppTotal, oppPending, oppExpected, oppOrderIn };
+}
+
+function recalcYear() {
+  let totals = {
+    quoted:0, expected:0, quotes:0, pending:0, expPipe:0, lost:0, totPipe:0,
+    oppTotal:0, oppPending:0, oppExpected:0, oppOrderIn:0
+  };
+  const monthQuoted = [], monthExpected = [], monthCounts = [], monthPipes = [];
+  const tbody = document.getElementById('yearlyTableBody');
+  tbody.innerHTML = '';
+
+  for (let i=0;i<12;i++) {
+    const r = recalcMonth(i);
+    totals.quoted += r.totalQuoted;
+    totals.expected += r.expected;
+    totals.quotes += r.totalQuotes;
+    totals.pending += r.pending;
+    totals.expPipe += r.expPipe;
+    totals.lost += r.lost;
+    totals.totPipe += r.totPipe;
+    totals.oppTotal += r.oppTotal;
+    totals.oppPending += r.oppPending;
+    totals.oppExpected += r.oppExpected;
+    totals.oppOrderIn += r.oppOrderIn;
+
+    monthQuoted.push(r.totalQuoted);
+    monthExpected.push(r.expected);
+    monthCounts.push(r.totalQuotes);
+    monthPipes.push(r.totPipe);
+
+    const tr = document.createElement('tr');
+    tr.innerHTML = `
+      <td>${months[i].split(' ')[0]}</td>
+      <td>${gbp(r.totalQuoted)}</td>
+      <td>${gbp(r.expected)}</td>
+      <td>${r.totalQuotes.toLocaleString()}</td>
+      <td>${gbp(r.totPipe)}</td>
+      <td>${gbp(r.oppTotal)}</td>
+    `;
+    tbody.appendChild(tr);
+  }
+
+  const activeMonths = monthQuoted.filter(v => v > 0).length || 1;
+  document.getElementById('yrQuoted').innerText = gbp(totals.quoted);
+  document.getElementById('yrExpected').innerText = gbp(totals.expected);
+  document.getElementById('yrQuotes').innerText = totals.quotes.toLocaleString();
+  document.getElementById('yrAvg').innerText = gbp(totals.quoted / activeMonths);
+
+  document.getElementById('yrPending').innerText = gbp(totals.pending);
+  document.getElementById('yrExpPipe').innerText = gbp(totals.expPipe);
+  document.getElementById('yrLost').innerText = gbp(totals.lost);
+  document.getElementById('yrTotalPipe').innerText = gbp(totals.totPipe);
+
+  document.getElementById('yrOppTotal').innerText = gbp(totals.oppTotal);
+  document.getElementById('yrOppPending').innerText = gbp(totals.oppPending);
+  document.getElementById('yrOppExpected').innerText = gbp(totals.oppExpected);
+  document.getElementById('yrOppOrderIn').innerText = gbp(totals.oppOrderIn);
+
+  yearValueChart.data.datasets[0].data = monthQuoted;
+  yearValueChart.update();
+  yearCountChart.data.datasets[0].data = monthCounts;
+  yearCountChart.update();
+  yearExpectedChart.data.datasets[0].data = monthExpected;
+  yearExpectedChart.update();
+  yearPipelineChart.data.datasets[0].data = monthPipes;
+  yearPipelineChart.update();
+
+  document.getElementById('yearCommentary').value =
+    `The 2026 yearly report currently shows total quoted value of ${gbp(totals.quoted)}, expected orders of ${gbp(totals.expected)}, total quote activity of ${totals.quotes.toLocaleString()}, and total pipeline of ${gbp(totals.totPipe)}. Opportunity value currently totals ${gbp(totals.oppTotal)}, with ${gbp(totals.oppPending)} pending, ${gbp(totals.oppExpected)} expected, and ${gbp(totals.oppOrderIn)} ordered in. Update any monthly page and the yearly report refreshes automatically.`;
+}
+
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  el.addEventListener('input', recalcYear);
+  el.addEventListener('change', recalcYear);
+});
+
+
+function getPortalState() {
+  const data = {};
+  document.querySelectorAll('input, textarea, select').forEach(el => {
+    if (el.id) data[el.id] = el.value;
+  });
+  return data;
+}
+
+function savePortalData(showAlert = true) {
+  localStorage.setItem('hunter_portal_data', JSON.stringify(getPortalState()));
+  const status = document.getElementById('saveStatus');
+  if (status) status.textContent = 'Saved: ' + new Date().toLocaleString();
+  if (showAlert) alert('Your data has been saved in this browser.');
+}
+
+function loadPortalData(showAlert = true) {
+  const raw = localStorage.getItem('hunter_portal_data');
+  if (!raw) {
+    if (showAlert) alert('No saved data found in this browser.');
+    return;
+  }
+  const data = JSON.parse(raw);
+  Object.keys(data).forEach(id => {
+    const el = document.getElementById(id);
+    if (el) el.value = data[id];
+  });
+  recalcYear();
+  const status = document.getElementById('saveStatus');
+  if (status) status.textContent = 'Loaded: ' + new Date().toLocaleString();
+  if (showAlert) alert('Saved data loaded.');
+}
+
+function clearPortalData() {
+  if (!confirm('Clear all saved data for this portal from this browser?')) return;
+  localStorage.removeItem('hunter_portal_data');
+  const status = document.getElementById('saveStatus');
+  if (status) status.textContent = 'Saved data cleared';
+  alert('Saved data has been cleared.');
+}
+
+function downloadFilledHtml() {
+  const clone = document.documentElement.cloneNode(true);
+
+  clone.querySelectorAll('input').forEach((input, i) => {
+    const live = document.querySelectorAll('input')[i];
+    input.setAttribute('value', live.value);
+    if (live.hasAttribute('checked')) {
+      if (live.checked) input.setAttribute('checked', 'checked');
+      else input.removeAttribute('checked');
+    }
+  });
+
+  clone.querySelectorAll('textarea').forEach((ta, i) => {
+    const live = document.querySelectorAll('textarea')[i];
+    ta.textContent = live.value;
+  });
+
+  clone.querySelectorAll('select').forEach((sel, i) => {
+    const live = document.querySelectorAll('select')[i];
+    [...sel.options].forEach((opt, idx) => {
+      if (live.options[idx].selected) opt.setAttribute('selected', 'selected');
+      else opt.removeAttribute('selected');
+    });
+  });
+
+  const htmlText = '<!DOCTYPE html>\n' + clone.outerHTML;
+  const blob = new Blob([htmlText], { type: 'text/html;charset=utf-8' });
+  const url = URL.createObjectURL(blob);
+
+  const monthName = (document.getElementById('m1_month')?.value || 'Report').trim();
+  const fileName = 'Hunter_Board_Portal_' + monthName.replace(/\s+/g, '_') + '_Saved.html';
+
+  const a = document.createElement('a');
+  a.href = url;
+  a.download = fileName;
+  document.body.appendChild(a);
+  a.click();
+  a.remove();
+  URL.revokeObjectURL(url);
+}
+
+let autoSaveTimer = null;
+function queueAutoSave() {
+  if (autoSaveTimer) clearTimeout(autoSaveTimer);
+  autoSaveTimer = setTimeout(() => savePortalData(false), 500);
+}
+
+document.querySelectorAll('input, textarea, select').forEach(el => {
+  el.addEventListener('input', () => { recalcYear(); queueAutoSave(); });
+  el.addEventListener('change', () => { recalcYear(); queueAutoSave(); });
+});
+
+window.addEventListener('load', () => {
+  loadPortalData(false);
+});
+
+
+function generateFebruaryCommentary() {
+  const ncq = Number(document.getElementById('m1_ncq')?.value || 0);
+  const scq = Number(document.getElementById('m1_scq')?.value || 0);
+  const npq = Number(document.getElementById('m1_npq')?.value || 0);
+  const spq = Number(document.getElementById('m1_spq')?.value || 0);
+
+  const corrective = ncq + scq;
+  const project = npq + spq;
+  const totalQuotes = corrective + project;
+  const northTotal = ncq + npq;
+  const southTotal = scq + spq;
+
+  const ncv = Number(document.getElementById('m1_ncv')?.value || 0);
+  const scv = Number(document.getElementById('m1_scv')?.value || 0);
+  const npv = Number(document.getElementById('m1_npv')?.value || 0);
+  const spv = Number(document.getElementById('m1_spv')?.value || 0);
+  const totalQuoted = ncv + scv + npv + spv;
+  const expectedOrders = totalQuoted / 3;
+
+  const pending = Number(document.getElementById('m1_pending')?.value || 0);
+  const expectedPipe = Number(document.getElementById('m1_expPipe')?.value || 0);
+  const lost = Number(document.getElementById('m1_lost')?.value || 0);
+  const totalPipe = Number(document.getElementById('m1_totPipe')?.value || 0);
+
+  const currency = (v) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', maximumFractionDigits: 0 }).format(v || 0);
+  const currency2 = (v) => new Intl.NumberFormat('en-GB', { style: 'currency', currency: 'GBP', minimumFractionDigits: 2, maximumFractionDigits: 2 }).format(v || 0);
+
+  const overview =
+    `February delivered a strong month of sales activity, with total quotation value of ${currency(totalQuoted)} and a live pipeline of ${currency(totalPipe)}. Activity levels remained high across both North and South, with a clear weighting towards project-led opportunities. The month shows positive progress in building momentum, improving opportunity quality, and strengthening the business position heading into March.`;
+
+  const sales =
+    `${totalQuotes} quotations were produced during the month, made up of ${corrective} corrective quotes and ${project} project quotes. The North generated ${northTotal} total quotes, while the South delivered ${southTotal}, showing strong contribution across both regions. Project activity remained the dominant driver of performance, reflecting a continued focus on larger and more strategic opportunities rather than lower-value corrective work alone. With quoted value at ${currency(totalQuoted)} and expected orders at ${currency(expectedOrders)}, the month demonstrates encouraging sales momentum and improved conversion potential.`;
+
+  const pipeline =
+    `Pipeline remains positive at ${currency(totalPipe)}, with ${currency(pending)} currently sitting in pending opportunities, ${currency(expectedPipe)} in expected opportunities, and ${currency(lost)} recorded as lost. The current profile provides a reasonable base for conversion into March, although continued focus is required on building early-stage pipeline so that future months are not overly reliant on the current opportunity bank. Overall, the pipeline quality is improving and provides a stronger platform for near-term revenue generation.`;
+
+  const strategic =
+    `Strategically, February continues to demonstrate strong traction in project-led work, supporting the wider direction of building a more scalable and higher-value sales model across integrated systems, access control, CCTV and fire. The weighting towards project opportunities is a positive indicator, showing that the business is moving towards better quality revenue and stronger opportunities with national clients. This supports the broader aim of building a more balanced operation with recurring activity, planned works and larger upgrade programmes.`;
+
+  const risks =
+    `The key risks remain around conversion, delivery capacity and maintaining enough pipeline depth behind the current opportunities. As activity levels increase, operational planning, RAMS quality and delivery standards must continue to improve so that client confidence is maintained and larger projects can be delivered consistently. There is also a need to ensure that reactive service standards do not slip while project workload builds, as both areas remain important to client retention and future growth.`;
+
+  const outlook =
+    `The outlook for March is positive. With strong activity levels, a live pipeline of ${currency(totalPipe)}, and expected opportunities of ${currency(expectedPipe)}, the business is well positioned to build further momentum. Priority now should be on converting higher-value opportunities, maintaining quote volume across both regions, and ensuring delivery remains consistent as the business moves into the next phase of Q1. If the current level of project-led activity continues, March should provide another solid step forward in both revenue quality and overall business confidence.`;
+
+  document.getElementById('m1_overview').value = overview;
+  document.getElementById('m1_sales').value = sales;
+  document.getElementById('m1_pipeline').value = pipeline;
+  document.getElementById('m1_strategic').value = strategic;
+  document.getElementById('m1_risks').value = risks;
+  document.getElementById('m1_outlook').value = outlook;
+
+  if (typeof savePortalData === 'function') {
+    savePortalData(false);
+  }
+  alert('February commentary has been generated in the same fuller board style as January.');
+}
+
+recalcYear();
+</script>
+</body>
+</html>
